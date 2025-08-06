@@ -9,34 +9,34 @@
   default: false;
   prefersdark: false;
   color-scheme: "light";
-  --color-base-100: oklch(98% 0.03 100);      /* světlý základ */
-  --color-base-200: oklch(95% 0.06 100);
-  --color-base-300: oklch(90% 0.10 100);
-  --color-base-content: oklch(30% 0.05 100);  /* tmavý text */
-  --color-primary: oklch(92% 0.19 100);       /* citronově žlutá */
-  --color-primary-content: oklch(30% 0.05 100);
-  --color-secondary: oklch(85% 0.13 230);     /* jemně modrá */
-  --color-secondary-content: oklch(25% 0.04 230);
-  --color-accent: oklch(80% 0.18 130);        /* limetková */
-  --color-accent-content: oklch(25% 0.04 130);
-  --color-neutral: oklch(60% 0.02 100);       /* šedá */
-  --color-neutral-content: oklch(98% 0.01 100);
-  --color-info: oklch(80% 0.14 250);          /* modrá info */
-  --color-info-content: oklch(20% 0.03 250);
-  --color-success: oklch(80% 0.18 140);       /* zelená */
-  --color-success-content: oklch(20% 0.03 140);
-  --color-warning: oklch(90% 0.18 80);        /* oranžová */
-  --color-warning-content: oklch(30% 0.06 80);
-  --color-error: oklch(70% 0.22 30);          /* červená */
-  --color-error-content: oklch(98% 0.01 30);
-  --radius-selector: 0.25rem;
+  --color-base-100: oklch(100% 0 0);
+  --color-base-200: oklch(98% 0.016 73.684);
+  --color-base-300: oklch(82% 0.189 84.429);
+  --color-base-content: oklch(39% 0.141 25.723);
+  --color-primary: oklch(40.723% 0.161 17.53);
+  --color-primary-content: oklch(88.144% 0.032 17.53);
+  --color-secondary: oklch(61.676% 0.169 23.865);
+  --color-secondary-content: oklch(12.335% 0.033 23.865);
+  --color-accent: oklch(66% 0.179 58.318);
+  --color-accent-content: oklch(98% 0.003 247.858);
+  --color-neutral: oklch(82% 0.189 84.429);
+  --color-neutral-content: oklch(13% 0.028 261.692);
+  --color-info: oklch(69.224% 0.097 207.284);
+  --color-info-content: oklch(13.844% 0.019 207.284);
+  --color-success: oklch(60.995% 0.08 174.616);
+  --color-success-content: oklch(12.199% 0.016 174.616);
+  --color-warning: oklch(70.081% 0.164 56.844);
+  --color-warning-content: oklch(14.016% 0.032 56.844);
+  --color-error: oklch(53.07% 0.241 24.16);
+  --color-error-content: oklch(90.614% 0.048 24.16);
+  --radius-selector: 2rem;
   --radius-field: 0.5rem;
-  --radius-box: 1rem;
+  --radius-box: 0rem;
   --size-selector: 0.25rem;
   --size-field: 0.25rem;
-  --border: 2px;
+  --border: 1px;
   --depth: 1;
-  --noise: 0.5;
+  --noise: 0;
 }
 
 @plugin "daisyui/theme" {
@@ -44,32 +44,32 @@
   default: true;
   prefersdark: false;
   color-scheme: "dark";
-  --color-base-100: oklch(14% 0 0);           /* tmavý základ */
-  --color-base-200: oklch(20% 0 0);
-  --color-base-300: oklch(26% 0 0);
-  --color-base-content: oklch(97% 0 0);       /* světlý text */
-  --color-primary: oklch(60% 0.126 221.723); /* modrá */
-  --color-primary-content: oklch(98% 0.019 200.873);
-  --color-secondary: oklch(51% 0.262 276.966); /* fialová */
-  --color-secondary-content: oklch(96% 0.018 272.314);
-  --color-accent: oklch(64% 0.222 41.116);   /* oranžová */
-  --color-accent-content: oklch(98% 0.016 73.684);
-  --color-neutral: oklch(20% 0 0);           /* tmavě šedá */
+  --color-base-100: oklch(14% 0.005 285.823);
+  --color-base-200: oklch(21% 0.006 285.885);
+  --color-base-300: oklch(27% 0.006 286.033);
+  --color-base-content: oklch(96% 0.001 286.375);
+  --color-primary: oklch(82% 0.119 306.383);
+  --color-primary-content: oklch(29% 0.149 302.717);
+  --color-secondary: oklch(89% 0.196 126.665);
+  --color-secondary-content: oklch(27% 0.072 132.109);
+  --color-accent: oklch(80% 0.114 19.571);
+  --color-accent-content: oklch(25% 0.092 26.042);
+  --color-neutral: oklch(37% 0.013 285.805);
   --color-neutral-content: oklch(98% 0 0);
-  --color-info: oklch(70% 0.165 254.624);    /* světle modrá */
-  --color-info-content: oklch(28% 0.091 267.935);
-  --color-success: oklch(79% 0.209 151.711); /* zelená */
-  --color-success-content: oklch(26% 0.065 152.934);
-  --color-warning: oklch(82% 0.189 84.429);  /* žlutá */
-  --color-warning-content: oklch(30% 0.06 80);
-  --color-error: oklch(71% 0.202 349.761);   /* červená */
-  --color-error-content: oklch(98% 0.01 30);
-  --radius-selector: 0.25rem;
+  --color-info: oklch(60% 0.126 221.723);
+  --color-info-content: oklch(98% 0.019 200.873);
+  --color-success: oklch(64% 0.2 131.684);
+  --color-success-content: oklch(98% 0.031 120.757);
+  --color-warning: oklch(64% 0.222 41.116);
+  --color-warning-content: oklch(98% 0.016 73.684);
+  --color-error: oklch(59% 0.249 0.584);
+  --color-error-content: oklch(97% 0.014 343.198);
+  --radius-selector: 2rem;
   --radius-field: 0.5rem;
-  --radius-box: 1rem;
+  --radius-box: 0rem;
   --size-selector: 0.25rem;
   --size-field: 0.25rem;
-  --border: 2px;
+  --border: 1.5px;
   --depth: 1;
-  --noise: 0.5;
+  --noise: 1;
 }

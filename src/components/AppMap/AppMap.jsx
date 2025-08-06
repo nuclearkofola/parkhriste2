@@ -1,41 +1,30 @@
 import { useState, useEffect, useRef } from 'react';
-import { MapContainer, TileLayer, GeoJSON, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, GeoJSON, useMap, Marker, Polyline } from 'react-leaflet';
 import './AppMap.css';
 import { selectedIcon, gardenIcon } from './leafletIcons';
 import { fetchGolemioData } from './api';
 import { createPopupContent } from './popupUtils';
 
 // Pomocná komponenta pro přístup k mapě v rámci React-Leaflet
-function MapController({ selectedItemType, selectedItemId, gardens, playgrounds }) {
+function MapController({ selectedItemType, selectedItemId, gardens, playgrounds, userLocation, setMapCenter }) {
   const map = useMap();
   
   useEffect(() => {
-    if (!selectedItemType || !selectedItemId || !map) return;
-    
-    const data = selectedItemType === 'garden' ? gardens : playgrounds;
-    if (!data || !data.features) return;
-    
-    const feature = data.features.find(f => f.properties.id === selectedItemId);
-    if (feature) {
-      // Centrovat mapu na hřiště s vhodným zoomem
-      if (feature.geometry.type === 'Point') {
+    if (!map) return;
+    // Pokud je vybrán objekt, najdi a otevři popup
+    if (selectedItemType && selectedItemId) {
+      const data = selectedItemType === 'garden' ? gardens : playgrounds;
+      if (!data || !data.features) return;
+      const feature = data.features.find(f => f.properties.id === selectedItemId);
+      if (feature && feature.geometry.type === 'Point') {
         const [lng, lat] = feature.geometry.coordinates;
-        
-        // Nastavit pohled s posunutím vlevo pro lepší zobrazení popupu
-        map.setView(
-          [lat - 0.0005, lng + 0.001], // Mírně posunout pohled pro popup
-          17 // Větší zoom pro lepší detail
-        );
-        
-        // Najít a kliknout na vrstvu
+        map.setView([lat - 0.0005, lng + 0.001], 17);
         setTimeout(() => {
           map.eachLayer((layer) => {
             if (layer.feature && 
                 layer.feature.properties && 
                 layer.feature.properties.id === selectedItemId &&
                 layer.feature.properties.type === selectedItemType) {
-              
-              // Otevřít popup s vhodným offsetem
               if (layer.getPopup()) {
                 layer.openPopup();
               } else {
@@ -43,10 +32,14 @@ function MapController({ selectedItemType, selectedItemId, gardens, playgrounds 
               }
             }
           });
-        }, 500); // Počkat až se vrstvy načtou
+        }, 500);
       }
+    } else if (userLocation) {
+      // Pokud není vybrán objekt, přibliž na uživatele
+      map.setView([userLocation.lat, userLocation.lon], 16);
+      setMapCenter && setMapCenter([userLocation.lat, userLocation.lon]);
     }
-  }, [map, selectedItemType, selectedItemId, gardens, playgrounds]);
+  }, [map, selectedItemType, selectedItemId, gardens, playgrounds, userLocation, setMapCenter]);
 
   return null;
 }
@@ -56,7 +49,18 @@ const AppMap = ({ className, selectedItemType, selectedItemId }) => {
   const [playgrounds, setPlaygrounds] = useState(null);
   const [error, setError] = useState(null);
   const [selectedLayer, setSelectedLayer] = useState(null);
+  const [userLocation, setUserLocation] = useState(null);
+  const [mapCenter, setMapCenter] = useState([50.0755, 14.4378]);
   const apiKey = import.meta.env.VITE_GOLEMIO_KEY;
+  // Získání aktuální polohy uživatele
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => setUserLocation({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
+        () => setUserLocation(null)
+      );
+    }
+  }, []);
 
   useEffect(() => {
     const loadData = async () => {
@@ -126,17 +130,42 @@ const AppMap = ({ className, selectedItemType, selectedItemId }) => {
     });
   };
 
+  // Najdi vybraný objekt pro případné vykreslení čáry
+  let selectedCoords = null;
+  if (selectedItemType && selectedItemId) {
+    const data = selectedItemType === 'garden' ? gardens : playgrounds;
+    const feature = data?.features?.find(f => f.properties.id === selectedItemId);
+    if (feature && feature.geometry.type === 'Point') {
+      selectedCoords = [feature.geometry.coordinates[1], feature.geometry.coordinates[0]];
+    }
+  }
+
   return (
     <div className={`relative ${className}`}>
       {error && <div className="alert alert-error m-4 max-w-2xl"><span>{error}</span></div>}
-      <MapContainer center={[50.0755, 14.4378]} zoom={11} style={{ height: '100%', width: '100%' }}>
+      <MapContainer center={mapCenter} zoom={11} style={{ height: '100%', width: '100%' }}>
         <MapController 
           selectedItemType={selectedItemType} 
           selectedItemId={selectedItemId}
           gardens={gardens}
           playgrounds={playgrounds}
+          userLocation={userLocation}
+          setMapCenter={setMapCenter}
         />
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution="&copy; OpenStreetMap contributors" />
+        {/* Marker aktuální polohy */}
+        {userLocation && (
+          <Marker position={[userLocation.lat, userLocation.lon]} icon={L.divIcon({
+            html: '<div class="custom-icon user-icon"><span>📍</span></div>',
+            iconSize: [40, 40],
+            iconAnchor: [20, 40],
+            className: ''
+          })} />
+        )}
+        {/* Čára mezi uživatelem a vybraným objektem */}
+        {userLocation && selectedCoords && (
+          <Polyline positions={[[userLocation.lat, userLocation.lon], selectedCoords]} color="#00bcd4" weight={3} dashArray="6 6" />
+        )}
         {gardens && <GeoJSON data={gardens} pointToLayer={(f, latlng) => L.marker(latlng, { icon: gardenIcon })} onEachFeature={(f, l) => { f.properties.type = 'garden'; handleFeatureClick(f, l); }} />}
         {playgrounds && <GeoJSON data={playgrounds} style={playgroundStyle} pointToLayer={(f, latlng) => L.marker(latlng, { icon: selectedIcon })} onEachFeature={(f, l) => { f.properties.type = 'playground'; l.options.defaultStyle = playgroundStyle; handleFeatureClick(f, l); }} />}
       </MapContainer>
